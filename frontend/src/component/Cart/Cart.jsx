@@ -1,16 +1,19 @@
 import { Typography } from '@material-ui/core';
 import React, { Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { addItemsToCart, removeItemsFromCart } from '../../actions/cartAction';
 import "./Cart.css";
 import CartItemCard from "./CartItemCard.jsx";
 import RemoveShoppingCartIcon from "@material-ui/icons/RemoveShoppingCart";
+import { useNavigate } from 'react-router-dom';
+window.scrollTo(0, 0);
 
 const Cart = () => {
     const dispatch = useDispatch();
     const { cartItems } = useSelector((state) => state.cart);
     const { product} = useSelector((state) => state.productDetails);
+    const navigate = useNavigate();
 
     const increaseQuantity = (id, quantity, stock) => {
         if(product.Stock <= quantity) return;
@@ -29,6 +32,10 @@ const Cart = () => {
     const deleteCartItems = (id) => {
         dispatch(removeItemsFromCart(id));
     };
+
+    const checkoutHandler = () => {
+        navigate("/shipping?redirect=shipping")
+    }
 
     return (
         <Fragment>
@@ -70,7 +77,7 @@ const Cart = () => {
                             </div>
                             <div></div>
                             <div className="checkOutBtn">
-                                <button>Check Out</button>
+                                <button onClick={checkoutHandler}>Check Out</button>
                             </div>
                         </div>
                     </div>

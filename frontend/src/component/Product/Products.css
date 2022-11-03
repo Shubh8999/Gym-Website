@@ -1,7 +1,7 @@
 .productsHeading {
     margin: 2vmax auto;
     width: 15vw;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.171);
+    border-bottom: 3px solid #b02a57;
     padding: 2vmax;
     color: rgba(0, 0, 0, 0.678);
     font: 500 1.5vmax "Roboto";
@@ -14,6 +14,7 @@
     padding: 0 300px;
     justify-content: center;
     min-height: 30vh;
+    background-color: whitesmoke;
 }
 
 .paginationBox {
@@ -53,7 +54,7 @@
 }
 
 .page-item:hover {
-    background-color: rgb(230, 230, 230);
+    background-color: #b02a57;
 }
 
 .page-item:hover .page-link {
@@ -61,7 +62,7 @@
 }
 
 .pageItemActive {
-    background-color: tomato;
+    background-color: #F25287;
 }
 
 .pageLinkActive {
@@ -93,7 +94,7 @@
 }
 
 .category-link:hover {
-    color: tomato;
+    color: #BD1E51;
 }
 
 .filterBox>fieldset {

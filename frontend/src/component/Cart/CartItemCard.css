@@ -28,7 +28,7 @@
 }
 
 .CartItemCard>div>p {
-    color: tomato;
+    color: rgb(251, 18, 18);
     font: 100 0.8vmax "Roboto";
     cursor: pointer;
 }

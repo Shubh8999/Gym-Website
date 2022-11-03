@@ -1,0 +1,418 @@
+// import React, { Fragment, useEffect, useRef } from "react";
+// import CheckoutSteps from "./CheckoutSteps";
+// import { useSelector, useDispatch } from "react-redux";
+// import MetaData from "../layout/MetaData";
+// import { Typography } from "@material-ui/core";
+// import { useAlert } from "react-alert";
+// import {
+//   CardNumberElement,
+//   CardCvcElement,
+//   CardExpiryElement,
+//   useStripe,
+//   useElements,
+//   Elements
+// } from "@stripe/react-stripe-js"
+// import axios from "axios";
+// import "./payment.css";
+// import CreditCardIcon from "@material-ui/icons/CreditCard";
+// import EventIcon from "@material-ui/icons/Event";
+// import VpnKeyIcon from "@material-ui/icons/VpnKey";
+// import PaymentSec from "./PaymentSec";
+import { Fragment, React, useRef, useState } from 'react'
+// import "./SignUp.scss";
+// import axios from 'axios';
+// import FileBase64 from 'react-file-base64';
+import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import Axios from 'axios';
+import "./payment.scss"
+import { AiFillWarning } from "react-icons/ai"
+// import CardItem from "./CardItem"
+import {
+  AiOutlineMail,
+  AiOutlineUpload,
+  AiFillPhone,
+  AiFillInfoCircle,
+  AiOutlineUser
+} from "react-icons/ai"
+import { FaEye, FaEyeSlash } from 'react-icons/fa'
+import Card from 'react-bootstrap/Card';
+import ListGroup from 'react-bootstrap/ListGroup';
+import Carousel from 'react-bootstrap/Carousel';
+// import CardContainer from './CardContainer';
+import { useEffect } from 'react';
+import MetaData from '../layout/MetaData';
+import CheckoutSteps from './CheckoutSteps';
+
+
+
+const Payment = () => {
+  const [img, setImg] = useState("");
+  const [index, setIndex] = useState(0);
+  const [data, setData] = useState([]);
+  const [cardholder, setCardholder] = useState("");
+  const [cardnumber, setCardNumber] = useState("");
+  const [EXPMM, setEXPMM] = useState("");
+  const [EXPYY, setEXPYY] = useState("");
+  const [plans, setPlans] = useState([]);
+
+  const handleSelect = (selectedIndex, e) => {
+    setIndex(selectedIndex);
+  };
+  const [id, setId] = useState("");
+  const [subscription, setSubscription] = useState("");
+  const [email, setemail] = useState("");
+  const [pic, setpic] = useState("");
+  const [amount, setamount] = useState("");
+  const [date, setdate] = useState(Date.now());
+  const [status, setStatus] = useState([]);
+  const cn = document.getElementById("crdnum");
+  // let navigate = useNavigate();
+  // let location = useLocation();
+
+  const setTransaction = (e) => {
+    e.preventDefault();
+
+    if (cardnumber == "" || cardholder == "" || id == "" || date == "" || subscription == "") {
+      setStatus("Please fill all the fields")
+    }
+
+    else if (cardnumber.length < 20 || cardnumber.length > 20) {
+      setStatus("Invalid card number")
+    }
+
+    else if (cardholder.length < 6) {
+      setStatus("Invalid card holder name")
+    }
+
+    else if (EXPMM.length != 2 || EXPYY.length != 2) {
+      setStatus("Invalid Card Expiration Date")
+    }
+
+
+  }
+
+  const cdnum = (e) => {
+    if (cn.value.length > 0) {
+
+      if (cn.value.length == 4 || cn.value.length == 9 || cn.value.length == 14 || cn.value.length == 19) {
+        cn.value += " ";
+      }
+    }
+    setCardNumber(cn.value);
+  }
+
+
+  const orderInfo = JSON.parse(sessionStorage.getItem("orderInfo"));
+
+  const dispatch = useDispatch();
+  const alert = useAlert();
+  // const stripe = useStripe();
+  // const elements = useElements();
+  // const payBtn = useRef(null);
+
+  const { shippingInfo, cartItems } = useSelector((state) => state.cart);
+  const { user } = useSelector((state) => state.user);
+  const { error } = useSelector((state) => state.newOrder);
+
+  const paymentData = {
+    amount: Math.round(orderInfo.totalPrice * 100),
+  };
+
+  const order = {
+    shippingInfo,
+    orderItems: cartItems,
+    itemsPrice: orderInfo.subtotal,
+    taxPrice: orderInfo.tax,
+    shippingPrice: orderInfo.shippingCharges,
+    totalPrice: orderInfo.totalPrice,
+  };
+
+  const submitHandler = async (e) => {
+    e.preventDefault();
+
+    payBtn.current.disabled = true;
+
+    try {
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+      const { data } = await axios.post(
+        "/api/v1/payment/process",
+        paymentData,
+        config
+      );
+
+      const client_secret = data.client_secret;
+
+      if (!stripe || !elements) return;
+
+      const result = await stripe.confirmCardPayment(client_secret, {
+        payment_method: {
+          card: elements.getElement(CardNumberElement),
+          billing_details: {
+            name: user.name,
+            email: user.email,
+            address: {
+              line1: shippingInfo.address,
+              city: shippingInfo.city,
+              state: shippingInfo.state,
+              postal_code: shippingInfo.pinCode,
+              country: shippingInfo.country,
+            },
+          },
+        },
+      });
+
+      if (result.error) {
+        payBtn.current.disabled = false;
+
+        alert.error(result.error.message);
+      } else {
+        if (result.paymentIntent.status === "succeeded") {
+          order.paymentInfo = {
+            id: result.paymentIntent.id,
+            status: result.paymentIntent.status,
+          };
+
+          // dispatch(createOrder(order));
+
+          history.push("/success");
+        } else {
+          alert.error("There's some issue while processing payment ");
+        }
+      }
+    } catch (error) {
+      payBtn.current.disabled = false;
+      alert.error(error.response.data.message);
+    }
+  };
+
+  useEffect(() => {
+    if (error) {
+      alert.error(error);
+      dispatch(clearErrors());
+    }
+  }, [dispatch, error, alert]);
+
+
+  // const dispatch = useDispatch();
+  // const alert = useAlert();
+  // <Elements>
+  //   const elements = useElements();
+  //   const stripe = useStripe();
+  // </Elements>
+  const payBtn = useRef(null);
+
+  // const { shippingInfo, cartItems } = useSelector((state) => state.cart);
+  // const { user } = useSelector((state) => state.user);
+
+  // const submitHandler = async () => {  e.preventDefault();
+
+  //   payBtn.current.disabled = true;
+
+  //   try {
+  //     const config = {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     };
+  //     const { data } = await axios.post(
+  //       "/api/v1/payment/process",
+  //       paymentData,
+  //       config
+  //     );
+
+  //     const client_secret = data.client_secret;
+
+  //     if (!stripe || !elements) return;
+
+  //     const result = await stripe.confirmCardPayment(client_secret, {
+  //       payment_method: {
+  //         card: elements.getElement(CardNumberElement),
+  //         billing_details: {
+  //           name: user.name,
+  //           email: user.email,
+  //           address: {
+  //             line1: shippingInfo.address,
+  //             city: shippingInfo.city,
+  //             state: shippingInfo.state,
+  //             postal_code: shippingInfo.pinCode,
+  //             country: shippingInfo.country,
+  //           },
+  //         },
+  //       },
+  //     });
+
+  //     if (result.error) {
+  //       payBtn.current.disabled = false;
+
+  //       alert.error(result.error.message);
+  //     } else {
+  //       if (result.paymentIntent.status === "succeeded") {
+  //         order.paymentInfo = {
+  //           id: result.paymentIntent.id,
+  //           status: result.paymentIntent.status,
+  //         };
+
+  //         dispatch(createOrder(order));
+
+  //         history.push("/success");
+  //       } else {
+  //         alert.error("There's some issue while processing payment ");
+  //       }
+  //     }
+  //   } catch (error) {
+  //     payBtn.current.disabled = false;
+  //     alert.error(error.response.data.message);
+  //   }
+  // }; };
+
+  // return (
+  //   <Fragment>
+  //     <MetaData title="Payment" />
+  //     <CheckoutSteps activeStep={2} />
+  //     <div className="paymentContainer">
+  //       <form className="paymentForm" onSubmit={(e) => submitHandler(e)} >
+  //         <Elements>
+  //           <Typography>Card Info</Typography>
+  //           <div>
+  //             <CreditCardIcon />
+  //             <CardNumberElement className="paymentInput" />
+  //           </div>
+  //           <div>
+  //             <EventIcon />
+  //             <CardExpiryElement className="paymentInput" />
+  //           </div>
+  //           <div>
+  //             <VpnKeyIcon />
+  //             <CardCvcElement className="paymentInput" />
+  //           </div>
+  //           <input type="submit"
+  //             value={`Pay - ₹${orderInfo && orderInfo.totalPrice}`}
+  //             ref={payBtn}
+  //             className="paymentfromBtn"
+  //           />
+  //         </Elements>
+  //       </form>
+
+  //     </div>
+  //   </Fragment>
+  // )
+
+  return (
+    <Fragment>
+      <MetaData title="Payment" />
+      <CheckoutSteps activeStep={2} />
+
+      <div>
+        <form onSubmit={(e) => submitHandler(e)}>
+          <h3 style={{ marginLeft: "13vw" }}>Payment  :</h3>
+          <div>
+            <div class="cc__main__container">
+              <div class="form__container">
+                <div class="card__main">
+                  <div class="Front_card">
+                    <div class="top_card">
+                      <span class="visa">VISA</span>
+                      <div class="logo">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                      </div>
+                    </div>
+                    <div class="middle_card">
+                      <span class="chip"></span>
+                      <div class="card_number">{cardnumber}</div>
+                    </div>
+                    <div class="bottom_card">
+                      <div class="card_info">
+                        <div class="card_holder_name">{cardholder}</div>
+                      </div>
+                      <div class="card_info">
+                        <div class="card_holder_info">
+                          <span class="expire_month">{EXPMM}</span>
+                          <span>/</span>
+                          <span class="expire_year">{EXPYY}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="back_card">
+                    <div class="top_card">
+                      <span class="black_strip"></span>
+                      <div class="cvc_strip">
+                        <span class="cvc_number">000</span>
+                      </div>
+                    </div>
+                    <div class="bottom_card">
+                      <div class="flex">
+                        <span class="sticker"></span>
+                        <div class="logo1">
+                          <span></span>
+                          <span></span>
+                          <span></span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <form action="">
+                  <div class="inputBox">
+                    <span>card holder name</span>
+                    <input type="text" maxlength="30" class="card-holder-input" placeholder="John Doe" onChange={(e) => setCardholder(e.target.value)} />
+                  </div>
+                  <div class="inputBox">
+                    <span>card number</span>
+                    <input type="text" maxlength="20" class="card-number-input" id="crdnum" placeholder="0000 0000 0000 0000" onChange={(e) => cdnum(e.target.value)} />
+                  </div>
+                  <div class="multi__box">
+                    <div class="inputBox" onChange={(e) => setEXPMM(e.target.value)}>
+                      <span>exp. (MM)</span>
+                      <input type="text" maxlength="2" class="card-month-input" placeholder="00" />
+                    </div>
+                    <div class="inputBox" onChange={(e) => setEXPYY(e.target.value)}>
+                      <span>exp. (YY)</span>
+                      <input type="text" maxlength="2" class="card-year-input" placeholder="00" />
+                    </div>
+                    <div class="inputBox">
+                      <span>CVC</span>
+                      <input type="text" maxlength="3" class="card-cvc-input" placeholder="000" />
+                    </div>
+                  </div>
+                  <br />
+                  <br />
+                  {/* <span>Type of Subscription : </span>
+                  <select onChange={e => setSubscription(e.target.value)} style={{ padding: "15px", backgroundColor: "rgb(232, 240, 254)", border: "none", borderRadius: "20px", width: "80%" }}>
+                    <option value="Basic">Basic</option>
+                    <option value="Lite">Lite</option>
+                    <option value="Pro">Pro</option>
+                  </select> */}
+                  <br />
+                  <br />
+                  <div style={status.length == 0 ? { display: "none" } : { backgroundColor: "rgb(232, 240, 254)", borderRadius: "20px", padding: "30px" }}>
+                    <h1 style={{ color: "#2196f3", fontWeight: "900" }}><AiFillWarning style={{ color: "red" }} /> Oops !!</h1>
+                    <br />
+                    <ul>
+                      <li>
+                        <h5 style={{ color: "red", fontWeight: "700" }}>{status}</h5>
+                      </li>
+                    </ul>
+                  </div>
+                  <button onClick={(e) => setTransaction(e)} style={{ display: "block", padding: "10px", borderRadius: "20px", backgroundColor: "#2196f3", fontWeight: "900", color: "white" }} value={`Pay - ₹${orderInfo && orderInfo.totalPrice}`} ref={payBtn}> <h4>Pay Securely</h4></button>
+                  {/* <button onClick={(e) => setTransaction(e)} style={subscription == "Lite" ? { display: "block", padding: "10px", borderRadius: "20px", backgroundColor: "#2196f3", fontWeight: "900", color: "white" } : { display: "none" }}> {subscription == "Lite" && <h4>Pay Securely 400</h4>}</button>
+                  <button onClick={(e) => setTransaction(e)} style={subscription == "Pro" ? { display: "block", padding: "10px", borderRadius: "20px", backgroundColor: "#2196f3", fontWeight: "900", color: "white" } : { display: "none" }}> {subscription == "Pro" && <h4>Pay Securely 1000</h4>}</button> */}
+                </form>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+    </Fragment>
+  )
+}
+
+export default Payment

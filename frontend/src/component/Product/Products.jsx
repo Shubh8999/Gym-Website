@@ -17,8 +17,11 @@ const categories = [
   "Bar",
   "Accessories",
   "Nutrition",
-  "Pull-ups",
-  "Lapto",
+  "Gym Bench",
+  "Bike",
+  "Treadmill",
+  "Cross Trainers",
+  "Rowing Machine"
 ]
 
 
@@ -30,7 +33,7 @@ const Products = () => {
   const alert = useAlert();
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [price, setPrice] = useState([0, 25000]);
+  const [price, setPrice] = useState([0, 50000]);
   const [category, setCategory] = useState("");
   const [ratings, setRatings] = useState(0);
 
@@ -83,7 +86,7 @@ const Products = () => {
               valueLabelDisplay="on"
               aria-labelledby="range-slider"
               min={0}
-              max={25000}
+              max={50000}
             />
 
 

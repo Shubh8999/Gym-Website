@@ -5,10 +5,28 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: rgb(231, 231, 231);
+    background-color: #EEE2DC;
     position: fixed;
     top: 0%;
     left: 0;
+    padding: 20px;
+}
+
+.frm1 {
+    padding: 30px;
+}
+
+.frm2{
+    background-color: whitesmoke;
+    display: flex;
+    width: 65%;
+    box-shadow: 1px 1px 15px #b02a57;
+    
+}
+
+
+.frm3{
+    padding: 30px;
 }
 
 .LoginSignUpBox {
@@ -35,11 +53,11 @@
 }
 
 .login_signUp_toggle>p:hover {
-    color: tomato;
+    color: #F25287;
 }
 
 .LoginSignUpBox>div>button {
-    background-color: tomato;
+    background-color: #F25287;
     height: 3px;
     width: 50%;
     border: none;
@@ -133,7 +151,7 @@
 .loginBtn,
 .signUpBtn {
     border: none;
-    background-color: tomato;
+    background-color: #F25287;
     color: white;
     font: 300 0.9vmax "Roboto";
     width: 100%;
@@ -147,7 +165,7 @@
 
 .loginBtn:hover,
 .signUpBtn:hover {
-    background-color: rgb(179, 66, 46);
+    background-color: #b02a57;
 }
 
 .shiftToLeft {
