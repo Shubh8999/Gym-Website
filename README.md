@@ -42,9 +42,11 @@ Before you begin, make sure you have the following software installed on your sy
    git clone https://github.com/Shubh8999/Gym-Website/
 
 2. In order to start the frontend Server
+      ```bash
    npm start
 
-3. In order to start the backend server
+4. In order to start the backend server
+      ```bash
    npm dev
 
 
