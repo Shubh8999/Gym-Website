@@ -31,8 +31,8 @@ Before you begin, make sure you have the following software installed on your sy
 
 ### Dependencies
 
-- In the `client/` directory, you will find the frontend dependencies listed in `package.json`.
-- In the `server/` directory, you will find the backend dependencies listed in `package.json`.
+- In the `frontend/` directory, you will find the frontend dependencies listed in `package.json`.
+- In the `backend/` directory, you will find the backend dependencies listed in `package.json`.
 
 ### How to Run
 
@@ -42,11 +42,13 @@ Before you begin, make sure you have the following software installed on your sy
    git clone https://github.com/Shubh8999/Gym-Website/
 
 2. In order to start the frontend Server
-      ```bash
+   
+   ```bash
    npm start
 
 4. In order to start the backend server
-      ```bash
+   
+   ```bash
    npm dev
 
 
