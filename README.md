@@ -50,3 +50,5 @@ Before you begin, make sure you have the following software installed on your sy
    
    ```bash
    npm run dev
+
+![Gym Website App](frontend/img/Cart.jpg)
