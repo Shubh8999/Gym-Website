@@ -455,7 +455,7 @@ const Payment = () => {
         <form className="paymentForm" >
           <div className="form__container">
             <h1 className="header">Credit Card Form</h1>
-            <p className="subheader">by <span>Utba Zafar</span></p>
+            {/* <p className="subheader">by <span>Utba Zafar</span></p> */}
             <div className="card__main">
               <div className="Front_card">
                 <div className="top_card">
