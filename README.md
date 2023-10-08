@@ -49,9 +49,4 @@ Before you begin, make sure you have the following software installed on your sy
 4. In order to start the backend server
    
    ```bash
-   npm dev
-
-
- 
-
- 
+   npm run dev
