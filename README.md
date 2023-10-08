@@ -54,6 +54,6 @@ Before you begin, make sure you have the following software installed on your sy
 
 ![Home](frontend/img/Home.jpg)
 ![Login](frontend/img/Login.jpg)
-![Products](frontend/img/CProducts.jpg)
+![Products](frontend/img/Products.jpg)
 ![Cart](frontend/img/Cart.jpg)
 
